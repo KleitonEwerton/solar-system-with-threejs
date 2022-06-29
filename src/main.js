@@ -3,14 +3,13 @@ import { TrackballControls } from "../build/jsm/controls/TrackballControls.js";
 import { GLTFLoader } from "../build/jsm/loaders/GLTFLoader.js";
 import {
   initRenderer,
-  onWindowResize,
-  degreesToRadians,
+  onWindowResize
 } from "../libs/util/util.js";
 import { Astro } from "./Astro.js";
 
 //Variaveis
-var loader, scene, renderer, camera, light;
-
+var loader, renderer, camera, light;
+export var scene;
 //Declarações
 loader = new THREE.TextureLoader();
 scene = new THREE.Scene(); // Create main scene
@@ -25,7 +24,6 @@ camera = new THREE.PerspectiveCamera(
 );
 
 scene.add(light);
-
 camera.lookAt(0, 0, 0);
 camera.position.set(200, 50, 200);
 camera.up.set(0, 1, 0);
@@ -53,27 +51,21 @@ background();
 
 //----------------------------------END BACKGROUND SESSION -----------------------------------
 
-let sun = new Astro(scene, 0, 0, 0, 1, "../assets/objs/sun/scene.gltf");
-let earth = new Astro(scene, 50, 0, 0, 0.05, "../assets/objs/earth/scene.gltf");
-let mars = new Astro(scene, 70, 0, 0, 5, "../assets/objs/mars/scene.gltf");
+let sun = new Astro(0, 0, 0, 0,3, "../assets/objs/star_sun/scene.gltf");
+let earth = new Astro(0, 100, 200,300, 0.1, "../assets/objs/earth/scene.gltf");
+
 luz(0, 0, 0);
 
 render();
 
-function rotate() {
-  sun.rotateX(0.01);
-  sun.rotateY(0.01);
-  earth.rotateY(-0.25);
-  earth.translate(0.3);
-  mars.rotateY(-0.28);
-  mars.translate(0.5);
-}
+
 
 function render() {
-  rotate();
+  
   trackballControls.update();
   requestAnimationFrame(render);
   renderer.render(scene, camera);
+  earth.updatePosition();
 }
 
 function luz(posX, posY, posZ) {
@@ -81,7 +73,7 @@ function luz(posX, posY, posZ) {
   spotLight.position.copy(new THREE.Vector3(posX, posY, posZ));
   spotLight.angle = Math.PI;
   spotLight.castShadow = true;
-  spotLight.penumbra = 0.1;
+  spotLight.penumbra = 0.01;
   scene.add(spotLight);
 }
 
